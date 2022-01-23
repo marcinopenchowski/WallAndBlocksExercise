@@ -42,6 +42,40 @@ public class Wall implements Structure{
             }
 
             @Override
+            public Optional findBlockByColor(String color) {
+                for(Block block : getBlocks()){
+                    if(block instanceof CompositeBlock){
+                        if(((CompositeBlock) block).findBlockByColor(color).isPresent()) {
+                            return ((CompositeBlock) block).findBlockByColor(color);
+                        }
+                    }else{
+                        if(block.getColor().equals(color)){
+                            return Optional.of(block);
+                        }
+                    }
+                }
+                return Optional.empty();
+            }
+
+            @Override
+            public List<Block> findBlocksByMaterial(String material) {
+                List<Block> result = new ArrayList<>();
+                for(Block block : getBlocks()){
+                    if(block instanceof CompositeBlock){
+                        result.addAll(((CompositeBlock) block).findBlocksByMaterial(material));
+                    }else{
+                        if(block.getMaterial().equals(material)){
+                            result.add(block);
+                        }
+                    }
+
+                }
+
+
+                return result;
+            }
+
+            @Override
             public String toString() {
                 return "CompositeBlock{" +
                         blockList +
@@ -76,6 +110,7 @@ public class Wall implements Structure{
                 return result;
             }
         };
+
         blocks.add(compositeBlock);
         return compositeBlock;
     }
@@ -83,6 +118,11 @@ public class Wall implements Structure{
     @Override
     public Optional findBlockByColor(String color) {
         for (Block block : blocks) {
+            if(block instanceof CompositeBlock){
+                if(((CompositeBlock) block).findBlockByColor(color).isPresent()) {
+                    return ((CompositeBlock) block).findBlockByColor(color);
+                }
+            }
             if(block.getColor().equals(color)){
                 return Optional.of(block);
             }
@@ -95,6 +135,9 @@ public class Wall implements Structure{
         List<Block> result = new ArrayList<>();
 
         for (Block block : blocks) {
+            if(block instanceof CompositeBlock){
+                result.addAll(((CompositeBlock) block).findBlocksByMaterial(material));
+            }
             if(block.getMaterial().equals(material)){
                 result.add(block);
             }
@@ -162,26 +205,24 @@ public class Wall implements Structure{
         compositeBlock2.addBlock(compositeBlock3);
         compositeBlock1.addBlock(compositeBlock4);
 
+        System.out.println("========All Block List");
         System.out.println(wall.blocks);
-        System.out.println(wall.count());
+        System.out.println("Count List: " + wall.count());
+        System.out.println();
+        System.out.println("========Find Block By Color");
         System.out.println(wall.findBlockByColor("red"));
         System.out.println(wall.findBlockByColor("brown"));
         System.out.println(wall.findBlockByColor("grey"));
         System.out.println(wall.findBlockByColor("white"));
+        System.out.println(wall.findBlockByColor("yellow"));
+        System.out.println();
 
+        System.out.println("========Find Blocks By Material");
+        System.out.println();
+        System.out.println(wall.findBlocksByMaterial("ice"));
+        System.out.println(wall.findBlocksByMaterial("wood"));
+        System.out.println(wall.findBlocksByMaterial("brick"));
 
-
-        System.out.println(wall.findBlocksByMaterial("ice").size());
-        System.out.println(wall.findBlocksByMaterial("ice").get(0).getMaterial());
-        System.out.println(wall.findBlocksByMaterial("ice").get(1).getMaterial());
-        compositeBlock4.addBlock(block5);
-        System.out.println(wall.findBlocksByMaterial("ice").size());
-        System.out.println(wall.findBlocksByMaterial("ice").get(0).getMaterial());
-        System.out.println(wall.findBlocksByMaterial("ice").get(1).getMaterial());
-        compositeBlock4.removeBlock(block5);
-        System.out.println(wall.findBlocksByMaterial("ice").size());
-        System.out.println(wall.findBlocksByMaterial("ice").get(0).getMaterial());
-        System.out.println(wall.findBlocksByMaterial("ice").get(1).getMaterial());
 
 
 
