@@ -6,7 +6,6 @@ public class Wall implements Structure{
 
     private List<Block> blocks = new ArrayList<>();
 
-    // Creating Composite Block
     public CompositeBlock createCompositeBlock() {
         CompositeBlock compositeBlock = new CompositeBlock() {
             List<Block> blockList = new ArrayList<>();
@@ -18,12 +17,35 @@ public class Wall implements Structure{
 
             @Override
             public void addBlock(Block block) {
+                blocks.remove(block);
                 blockList.add(block);
             }
 
             @Override
             public void removeBlock(Block block) {
                 blockList.remove(block);
+                blocks.add(block);
+            }
+
+            @Override
+            public int checkSize() {
+                int size = 1;
+                for(Block block : getBlocks()){
+                    if(block instanceof CompositeBlock){
+                        size = size + ((CompositeBlock) block).checkSize();
+                    } else{
+                        size++;
+                        }
+                    }
+
+                return size;
+            }
+
+            @Override
+            public String toString() {
+                return "CompositeBlock{" +
+                        blockList +
+                        '}';
             }
 
             @Override
@@ -82,10 +104,18 @@ public class Wall implements Structure{
 
     @Override
     public int count() {
-        return blocks.size();
+        int size = 0;
+        for(Block block : blocks){
+            if(block instanceof CompositeBlock){
+                size = size + ((CompositeBlock) block).checkSize();
+            }else{
+                size++;
+            }
+        }
+
+        return size;
     }
 
-    // Creating Block
     public Block createBlock(String color, String material){
         Block block = new Block() {
             @Override
@@ -97,6 +127,11 @@ public class Wall implements Structure{
             public String getMaterial() {
                 return material;
 
+            }
+
+            @Override
+            public String toString() {
+                return "Block{" + this.getColor() + ", " + this.getMaterial() + "}";
             }
         };
         blocks.add(block);
@@ -126,20 +161,28 @@ public class Wall implements Structure{
         compositeBlock1.addBlock(compositeBlock2);
         compositeBlock2.addBlock(compositeBlock3);
         compositeBlock1.addBlock(compositeBlock4);
-        System.out.println(compositeBlock1.getColor());
+
+        System.out.println(wall.blocks);
         System.out.println(wall.count());
-        System.out.println(wall.findBlockByColor("brown") + " " + block1);
+        System.out.println(wall.findBlockByColor("red"));
+        System.out.println(wall.findBlockByColor("brown"));
+        System.out.println(wall.findBlockByColor("grey"));
+        System.out.println(wall.findBlockByColor("white"));
+
+
+
+        System.out.println(wall.findBlocksByMaterial("ice").size());
         System.out.println(wall.findBlocksByMaterial("ice").get(0).getMaterial());
         System.out.println(wall.findBlocksByMaterial("ice").get(1).getMaterial());
-        System.out.println(wall.findBlocksByMaterial("ice").size());
         compositeBlock4.addBlock(block5);
+        System.out.println(wall.findBlocksByMaterial("ice").size());
         System.out.println(wall.findBlocksByMaterial("ice").get(0).getMaterial());
         System.out.println(wall.findBlocksByMaterial("ice").get(1).getMaterial());
-        System.out.println(wall.findBlocksByMaterial("ice").size());
         compositeBlock4.removeBlock(block5);
+        System.out.println(wall.findBlocksByMaterial("ice").size());
         System.out.println(wall.findBlocksByMaterial("ice").get(0).getMaterial());
         System.out.println(wall.findBlocksByMaterial("ice").get(1).getMaterial());
-        System.out.println(wall.findBlocksByMaterial("ice").size());
+
 
 
 
